@@ -3,7 +3,7 @@ module ActionView
     module FormHelper
       alias_method :original_text_field, :text_field
       def text_field(object_name, method, options = {})
-        original_text_field(object_name, method, rename_autocomplete_option(options))
+        original_text_field(object_name, method, options)
       end
 
       # Returns an input tag of the "text" type tailored for accessing a specified attribute (identified by +method+) and
@@ -14,7 +14,8 @@ module ActionView
       #   # => <input type="text" id="post_title" name="post[title]" size="20" value="#{@post.title}"  data-autocomplete="author/autocomplete"/>
       #
       def autocomplete_field(object_name, method, source, options ={})
-        options[:autocomplete] = source
+        options["data-autocomplete"] = source
+        options[:autocomplete] = "off" if options[:autocomplete].nil?
         text_field(object_name, method, options)
       end
     end
@@ -22,7 +23,7 @@ module ActionView
     module FormTagHelper
       alias_method :original_text_field_tag, :text_field_tag
       def text_field_tag(name, value = nil, options = {})
-        original_text_field_tag(name, value, rename_autocomplete_option(options))
+        original_text_field_tag(name, value, options)
       end
 
       # Creates a standard text field that can be populated with jQuery's autocomplete plugin
@@ -32,7 +33,8 @@ module ActionView
       #   # => <input id="address" name="address" size="75" type="text" value="" data-autocomplete="address/autocomplete"/>
       #
       def autocomplete_field_tag(name, value, source, options ={})
-        options[:autocomplete] = source
+        options["data-autocomplete"] = source
+        options[:autocomplete] = "off" if options[:autocomplete].nil? 
         text_field_tag(name, value, options)
       end
     end
@@ -42,10 +44,7 @@ module ActionView
     # data-autocomplete key
     #
     private
-    def rename_autocomplete_option(options)
-      options["data-autocomplete"] = options.delete(:autocomplete)
-      options
-    end
+    
   end
 end
 
