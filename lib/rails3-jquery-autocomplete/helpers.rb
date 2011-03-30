@@ -87,6 +87,7 @@ module Rails3JQueryAutocomplete
       options = parameters[:options]
       term = parameters[:term]
       is_full_search = options[:full]
+      where = options[:where]
 
       limit = get_autocomplete_limit(options)
       implementation = get_implementation(model)
@@ -97,7 +98,7 @@ module Rails3JQueryAutocomplete
           search = (is_full_search ? '.*' : '^') + term + '.*'
           items = model.where(method.to_sym => /#{search}/i).limit(limit).order_by(order)
         when :activerecord
-          items = model.where(["LOWER(#{method}) LIKE ?", "#{(is_full_search ? '%' : '')}#{term.downcase}%"]) \
+          items = model.where(["LOWER(#{method}) LIKE ? #{where}", "#{(is_full_search ? '%' : '')}#{term.downcase}%"]) \
             .limit(limit).order(order)
       end
     end
